@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import { useForm, FieldValues, SubmitHandler } from "react-hook-form";
 import { BsGithub, BsGoogle } from "react-icons/bs";
 import axios from "axios";
+import { signIn } from "next-auth/react";
 
 import Input from "../../compoenents/inputs/Input";
 import Button from "../../compoenents/Button";
@@ -47,6 +48,20 @@ const AuthForm = () => {
     }
     if (variant === "LOGIN") {
       // NextAuh sign in
+      signIn("credentials", {
+        ...data,
+        redirect: false,
+      })
+        .then((callback) => {
+          if (callback?.error) {
+            toast.error("Invalid credentials!");
+          }
+
+          if (callback?.ok && !callback?.error) {
+            toast.success("Logged in!");
+          }
+        })
+        .finally(() => setIsLoading(false));
     }
   };
 
